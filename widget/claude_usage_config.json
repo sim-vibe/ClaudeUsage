@@ -1,0 +1,9 @@
+{
+  "session_limit_tokens": 15400000,
+  "session_window_hours": 5,
+  "weekly_limit_tokens": 65000000,
+  "weekly_sonnet_limit_tokens": 36000000,
+  "timezone_offset_hours": 9,
+  "weekly_reset_weekday": 4,
+  "weekly_reset_hour": 21
+}
