@@ -1,42 +1,74 @@
 import SwiftUI
 import AppKit
+import Darwin
 
 struct OnboardingView: View {
     @EnvironmentObject var model: RateLimitsModel
     @State private var errorMessage: String?
+    @State private var isInstalling = false
 
     var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "cpu")
-                .font(.system(size: 40))
-                .foregroundStyle(.blue)
+        VStack(spacing: 18) {
+            Image(systemName: "chart.bar.doc.horizontal")
+                .font(.system(size: 36))
+                .foregroundStyle(.tint)
+                .padding(.top, 4)
 
-            Text("Claude Usage")
-                .font(.title2.bold())
+            VStack(spacing: 4) {
+                Text("Token Meter for Claude")
+                    .font(.headline)
+                Text("Track your Claude Code usage in the menu bar.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
 
-            Text("Claude Code의 토큰 사용량을 메뉴바에서 확인하세요.\n시작하려면 Claude Code 설정 폴더 접근을 허용해주세요.")
-                .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
-                .font(.callout)
+            VStack(alignment: .leading, spacing: 10) {
+                InfoRow(icon: "folder", text: "Reads usage data from your ~/.claude folder")
+                InfoRow(icon: "wand.and.stars", text: "Installs a small status-line hook (one-time)")
+                InfoRow(icon: "lock.shield", text: "Everything stays on your Mac")
+            }
+            .font(.callout)
+            .padding(.vertical, 4)
 
             if let error = errorMessage {
                 Text(error)
                     .foregroundStyle(.red)
                     .font(.caption)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 8)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
-            Button("~/.claude 폴더 선택") {
+            Button {
                 selectFolder()
+            } label: {
+                HStack(spacing: 6) {
+                    if isInstalling {
+                        ProgressView().controlSize(.small)
+                    }
+                    Text(isInstalling ? "Setting up…" : "Grant folder access")
+                }
+                .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
+            .disabled(isInstalling)
 
-            Text("선택 → 앱이 설정 파일을 자동으로 구성합니다.")
-                .font(.caption)
+            Text("Requires Claude Code CLI · One-time setup")
+                .font(.caption2)
                 .foregroundStyle(.tertiary)
         }
-        .padding(28)
-        .frame(width: 340)
+        .padding(.horizontal, 22)
+        .padding(.vertical, 20)
+        .frame(width: 320)
+    }
+
+    private func realHomeDirectory() -> URL {
+        if let pw = getpwuid(getuid()), let cstr = pw.pointee.pw_dir {
+            return URL(fileURLWithPath: String(cString: cstr))
+        }
+        return URL(fileURLWithPath: NSHomeDirectory())
     }
 
     private func selectFolder() {
@@ -44,18 +76,47 @@ struct OnboardingView: View {
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
-        panel.message = "Claude Code 설정 폴더(~/.claude)를 선택해주세요."
-        panel.prompt = "허용"
-        panel.directoryURL = URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent(".claude")
+        panel.message = "Select your Claude Code config folder (~/.claude)."
+        panel.prompt = "Allow"
+        panel.showsHiddenFiles = true
+        panel.directoryURL = realHomeDirectory().appendingPathComponent(".claude")
 
         guard panel.runModal() == .OK, let url = panel.url else { return }
 
-        do {
-            try BookmarkManager.shared.saveBookmark(for: url)
-            try HookInstaller.install(in: url)
-            model.onboardingCompleted()
-        } catch {
-            errorMessage = "설정 실패: \(error.localizedDescription)"
+        errorMessage = nil
+        isInstalling = true
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            do {
+                try BookmarkManager.shared.saveBookmark(for: url)
+                do {
+                    try HookInstaller.install(in: url)
+                    isInstalling = false
+                    model.onboardingCompleted()
+                } catch {
+                    BookmarkManager.shared.clearBookmark()
+                    throw error
+                }
+            } catch {
+                isInstalling = false
+                errorMessage = error.localizedDescription
+            }
+        }
+    }
+}
+
+private struct InfoRow: View {
+    let icon: String
+    let text: String
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: icon)
+                .foregroundStyle(.tint)
+                .frame(width: 18, alignment: .center)
+            Text(text)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
         }
     }
 }

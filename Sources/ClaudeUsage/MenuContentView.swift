@@ -14,18 +14,54 @@ struct MenuContentView: View {
     @ViewBuilder
     private var usageContent: some View {
         let rl = model.rateLimits
+
+        if rl == nil {
+            waitingForData
+        } else {
+            usageBody(rl: rl)
+        }
+    }
+
+    @ViewBuilder
+    private var waitingForData: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 30))
+                .foregroundStyle(.green)
+            Text("Setup complete")
+                .font(.headline)
+            Text("Make a request in Claude Code to see your token usage here.")
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Divider().padding(.vertical, 4)
+
+            Button("↺ Refresh") {
+                model.refresh()
+            }
+            .keyboardShortcut("r")
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
+        .frame(width: 300)
+    }
+
+    @ViewBuilder
+    private func usageBody(rl: RateLimits?) -> some View {
         let fh = rl?.five_hour
         let sd = rl?.seven_day
         let nowTs = Date().timeIntervalSince1970
         let fhExpired = fh.map { nowTs > $0.resets_at } ?? false
 
         if model.fileAge > 60 {
-            Label("데이터 \(Int(model.fileAge))분 전 기준", systemImage: "exclamationmark.triangle")
+            Label("Data is \(Int(model.fileAge))min old", systemImage: "exclamationmark.triangle")
                 .foregroundStyle(.orange)
         }
 
         if fhExpired {
-            Label("5h 버킷 만료 — 다음 응답 후 갱신", systemImage: "exclamationmark.triangle")
+            Label("5h window expired — refreshes after next response", systemImage: "exclamationmark.triangle")
                 .foregroundStyle(.orange)
             Divider()
         }
@@ -76,18 +112,14 @@ struct MenuContentView: View {
 
         Divider()
 
-        Button("↺ Refresh") {}
-            .keyboardShortcut("r")
-
-        if rl == nil {
-            Text("Claude Code 세션 후 표시됩니다")
-                .foregroundStyle(.secondary)
-                .font(.caption)
+        Button("↺ Refresh") {
+            model.refresh()
         }
+        .keyboardShortcut("r")
     }
 
     private func formatReset(_ epoch: TimeInterval) -> String {
-        let tz = TimeZone(identifier: "Asia/Seoul")!
+        let tz = TimeZone.current
         let now = Date()
         let dt = Date(timeIntervalSince1970: epoch)
         var cal = Calendar.current
@@ -97,11 +129,11 @@ struct MenuContentView: View {
         fmt.dateFormat = "h:mma"
         let timeStr = fmt.string(from: dt).lowercased()
 
-        if dt <= now { return "Reset today at \(timeStr) (Asia/Seoul)" }
-        if cal.isDateInToday(dt) { return "Resets today at \(timeStr) (Asia/Seoul)" }
-        if cal.isDateInTomorrow(dt) { return "Resets tomorrow at \(timeStr) (Asia/Seoul)" }
+        if dt <= now { return "Reset today at \(timeStr)" }
+        if cal.isDateInToday(dt) { return "Resets today at \(timeStr)" }
+        if cal.isDateInTomorrow(dt) { return "Resets tomorrow at \(timeStr)" }
         fmt.dateFormat = "MMM d"
-        return "Resets \(fmt.string(from: dt)) at \(timeStr) (Asia/Seoul)"
+        return "Resets \(fmt.string(from: dt)) at \(timeStr)"
     }
 }
 

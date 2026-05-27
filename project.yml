@@ -1,0 +1,36 @@
+name: ClaudeUsage
+options:
+  bundleIdPrefix: com.simvibe
+  deploymentTarget:
+    macOS: "13.0"
+  xcodeVersion: "16.0"
+  createIntermediateGroups: true
+
+targets:
+  ClaudeUsage:
+    type: application
+    platform: macOS
+    deploymentTarget: "13.0"
+    sources:
+      - Sources/ClaudeUsage
+    info:
+      path: Info.plist
+      properties:
+        LSUIElement: true
+        CFBundleDisplayName: Token Meter for Claude
+        NSHumanReadableCopyright: "Copyright © 2026"
+        ITSAppUsesNonExemptEncryption: false
+        LSApplicationCategoryType: public.app-category.developer-tools
+    settings:
+      base:
+        PRODUCT_NAME: ClaudeUsage
+        PRODUCT_BUNDLE_IDENTIFIER: com.simvibe.ClaudeUsage
+        SWIFT_VERSION: 5.9
+        CODE_SIGN_STYLE: Automatic
+        INFOPLIST_FILE: Info.plist
+        CODE_SIGN_ENTITLEMENTS: ClaudeUsage.entitlements
+        ENABLE_HARDENED_RUNTIME: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        MACOSX_DEPLOYMENT_TARGET: "13.0"
+        MARKETING_VERSION: 1.0.0
+        CURRENT_PROJECT_VERSION: 3

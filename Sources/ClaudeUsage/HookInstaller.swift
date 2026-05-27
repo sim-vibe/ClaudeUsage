@@ -1,5 +1,16 @@
 import Foundation
 
+enum HookInstallError: LocalizedError {
+    case pythonNotInstalled
+
+    var errorDescription: String? {
+        switch self {
+        case .pythonNotInstalled:
+            return "Python 3 is not installed. Run 'xcode-select --install' in Terminal, then try again."
+        }
+    }
+}
+
 enum HookInstaller {
     static let hookScriptContent = """
     #!/bin/bash
@@ -33,6 +44,10 @@ enum HookInstaller {
     """
 
     static func install(in claudeDir: URL) throws {
+        guard isPython3Available() else {
+            throw HookInstallError.pythonNotInstalled
+        }
+
         let accessed = claudeDir.startAccessingSecurityScopedResource()
         defer { if accessed { claudeDir.stopAccessingSecurityScopedResource() } }
 
@@ -58,5 +73,25 @@ enum HookInstaller {
         ]
         let updated = try JSONSerialization.data(withJSONObject: settings, options: [.prettyPrinted, .sortedKeys])
         try updated.write(to: settingsURL, options: .atomic)
+    }
+
+    private static func isPython3Available() -> Bool {
+        let proc = Process()
+        proc.executableURL = URL(fileURLWithPath: "/usr/bin/python3")
+        proc.arguments = ["-c", "print(1)"]
+        proc.standardOutput = Pipe()
+        proc.standardError = Pipe()
+
+        do { try proc.run() } catch { return false }
+
+        let deadline = Date().addingTimeInterval(1.5)
+        while proc.isRunning && Date() < deadline {
+            Thread.sleep(forTimeInterval: 0.05)
+        }
+        if proc.isRunning {
+            proc.terminate()
+            return false
+        }
+        return proc.terminationStatus == 0
     }
 }

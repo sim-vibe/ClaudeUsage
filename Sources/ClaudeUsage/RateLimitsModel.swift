@@ -36,6 +36,11 @@ final class RateLimitsModel: ObservableObject {
         startWatching()
     }
 
+    func refresh() {
+        guard let url = rateLimitsURL() else { return }
+        load(from: url)
+    }
+
     private func startWatching() {
         guard let url = rateLimitsURL() else { return }
         load(from: url)

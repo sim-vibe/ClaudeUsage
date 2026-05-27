@@ -25,6 +25,10 @@ final class BookmarkManager {
         UserDefaults.standard.set(data, forKey: bookmarkKey)
     }
 
+    func clearBookmark() {
+        UserDefaults.standard.removeObject(forKey: bookmarkKey)
+    }
+
     func withAccess(_ block: () -> Void) {
         guard let url = claudeDirectoryURL else { return }
         let accessed = url.startAccessingSecurityScopedResource()

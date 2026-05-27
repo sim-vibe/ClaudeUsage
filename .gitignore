@@ -4,3 +4,7 @@
 xcuserdata/
 DerivedData/
 *.resolved
+build/
+AppIcon.iconset/
+AppIcon.icns
+AppIcon_1024.png
