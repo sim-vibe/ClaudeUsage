@@ -70,6 +70,12 @@ enum AboutPanel {
         w.standardWindowButton(.miniaturizeButton)?.isHidden = true
         w.standardWindowButton(.zoomButton)?.isHidden = true
         w.isReleasedWhenClosed = false
+        // Lock the window to the SwiftUI content's size *before* showing, so it
+        // doesn't appear at a guessed size and then snap/jitter to fit. Disable
+        // the open animation for the same reason, then center the final size.
+        w.animationBehavior = .none
+        hosting.view.layoutSubtreeIfNeeded()
+        w.setContentSize(hosting.view.fittingSize)
         w.center()
         window = w
         w.makeKeyAndOrderFront(nil)

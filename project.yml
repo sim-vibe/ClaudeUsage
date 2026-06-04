@@ -22,7 +22,7 @@ targets:
       - path: Sources/ClaudeUsage
     settings:
       base:
-        PRODUCT_NAME: ClaudeUsage
+        PRODUCT_NAME: "Token Meter"
         PRODUCT_BUNDLE_IDENTIFIER: com.simvibe.ClaudeUsage
         INFOPLIST_FILE: Info.plist
         GENERATE_INFOPLIST_FILE: NO
