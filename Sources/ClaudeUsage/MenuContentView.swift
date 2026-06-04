@@ -13,14 +13,49 @@ struct MenuContentView: View {
         }
     }
 
+    @ViewBuilder
     private var usageContent: some View {
-        let rl = model.rateLimits
+        if model.rateLimits == nil {
+            waitingForData
+        } else {
+            usageBody(rl: model.rateLimits)
+        }
+    }
+
+    @ViewBuilder
+    private var waitingForData: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 30))
+                .foregroundStyle(.green)
+            Text("Setup complete")
+                .font(.headline)
+            Text("Make a request in Claude Code to see your token usage here.")
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Divider().padding(.vertical, 4)
+
+            Button("Refresh") {
+                model.refresh()
+            }
+            .keyboardShortcut("r")
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
+        .frame(width: 300)
+    }
+
+    @ViewBuilder
+    private func usageBody(rl: RateLimits?) -> some View {
         let fh = rl?.five_hour
         let sd = rl?.seven_day
         let nowTs = Date().timeIntervalSince1970
         let fhExpired = fh.map { nowTs > $0.resets_at } ?? false
 
-        return VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 0) {
             // Top content is inset 14pt; footer rows span full width so their
             // highlight reaches the edges (native-menu look) while their text
             // still starts at the same 14pt as these section titles.
@@ -58,12 +93,6 @@ struct MenuContentView: View {
                     barPct: sd?.used_percentage ?? 0,
                     subtitle: sd.map { formatReset($0.resets_at) }
                 )
-
-                if rl == nil {
-                    Text("Appears after a Claude Code session")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
             }
             .padding(.horizontal, 14)
             .padding(.top, 14)

@@ -1,9 +1,11 @@
 import SwiftUI
 import AppKit
+import Darwin
 
 struct OnboardingView: View {
     @EnvironmentObject var model: RateLimitsModel
     @State private var errorMessage: String?
+    @State private var isInstalling = false
 
     var body: some View {
         VStack(spacing: 16) {
@@ -23,13 +25,25 @@ struct OnboardingView: View {
                 Text(error)
                     .foregroundStyle(.red)
                     .font(.caption)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 8)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
-            Button("Allow access to ~/.claude") {
+            Button {
                 selectFolder()
+            } label: {
+                HStack(spacing: 6) {
+                    if isInstalling {
+                        ProgressView().controlSize(.small)
+                    }
+                    Text(isInstalling ? "Setting up…" : "Allow access to ~/.claude")
+                }
+                .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
+            .disabled(isInstalling)
 
             Text("The .claude folder is already selected — just press Allow.")
                 .font(.caption)
@@ -54,12 +68,23 @@ struct OnboardingView: View {
                 .font(.caption)
             }
         }
-        .padding(28)
-        .frame(width: 340)
+        .padding(.horizontal, 22)
+        .padding(.vertical, 20)
+        .frame(width: 320)
+    }
+
+    /// Resolve the user's REAL home directory. In a sandboxed app
+    /// `NSHomeDirectory()` returns the container path, so we ask the password
+    /// database for the actual home to point the panel at the right ~/.claude.
+    private func realHomeDirectory() -> URL {
+        if let pw = getpwuid(getuid()), let cstr = pw.pointee.pw_dir {
+            return URL(fileURLWithPath: String(cString: cstr))
+        }
+        return URL(fileURLWithPath: NSHomeDirectory())
     }
 
     private func selectFolder() {
-        let claudeDir = URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent(".claude")
+        let claudeDir = realHomeDirectory().appendingPathComponent(".claude")
 
         let panel = NSOpenPanel()
         panel.canChooseFiles = false
@@ -69,6 +94,7 @@ struct OnboardingView: View {
         panel.title = "Token Meter — Grant Access"
         panel.message = "Press Allow to grant access to the .claude folder shown."
         panel.prompt = "Allow"
+        panel.showsHiddenFiles = true
         // Open *inside* ~/.claude so the user only has to confirm — no navigating,
         // no hidden-folder hunting. Clicking Allow grants this directory.
         panel.directoryURL = claudeDir
@@ -82,12 +108,25 @@ struct OnboardingView: View {
             return
         }
 
-        do {
-            try BookmarkManager.shared.saveBookmark(for: url)
-            try HookInstaller.install(in: url)
-            model.onboardingCompleted()
-        } catch {
-            errorMessage = "Setup failed: \(error.localizedDescription)"
+        errorMessage = nil
+        isInstalling = true
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            do {
+                try BookmarkManager.shared.saveBookmark(for: url)
+                do {
+                    try HookInstaller.install(in: url)
+                    isInstalling = false
+                    model.onboardingCompleted()
+                } catch {
+                    // Roll back the bookmark so the next attempt starts clean.
+                    BookmarkManager.shared.clearBookmark()
+                    throw error
+                }
+            } catch {
+                isInstalling = false
+                errorMessage = "Setup failed: \(error.localizedDescription)"
+            }
         }
     }
 }
