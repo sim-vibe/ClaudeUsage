@@ -124,9 +124,9 @@ Developer Tools. So only the build upload remains:
    zero permission (drops the folder-grant dialog for reads). Needs an App Group
    entitlement tied to the Apple account.
 
-> **Support email mismatch — reconcile:** the app's Contact Us uses
-> `support@keyz.dev`, but the App Store Connect support contact was set to
-> `ccusage@icloud.com`. Pick one before submitting.
+> **Support email = `support@keyz.dev`** (decided). The app's Contact Us already
+> uses it; update the App Store Connect support contact (currently
+> `ccusage@icloud.com`) to match before submitting.
 
 ## Machine-local (NOT in the repo)
 
