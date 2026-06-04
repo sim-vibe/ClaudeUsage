@@ -158,7 +158,7 @@ struct MenuContentView: View {
             }
             .padding(.bottom, 6)
         }
-        .frame(width: 280, alignment: .leading)
+        .frame(width: 330, alignment: .leading)
     }
 
     private func banner(_ text: String, icon: String, color: Color) -> some View {
@@ -172,9 +172,13 @@ struct MenuContentView: View {
             HStack {
                 Text(title)
                     .font(.system(.callout, design: .monospaced).weight(.semibold))
-                Spacer()
+                    .lineLimit(1)
+                    .fixedSize(horizontal: true, vertical: false)
+                Spacer(minLength: 8)
                 Text(pctText)
                     .font(.system(.callout, design: .monospaced))
+                    .lineLimit(1)
+                    .fixedSize(horizontal: true, vertical: false)
             }
             UsageBar(pct: barPct)
             if let subtitle {
