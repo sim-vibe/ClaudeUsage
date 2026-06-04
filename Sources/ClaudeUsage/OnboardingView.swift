@@ -7,17 +7,17 @@ struct OnboardingView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            Image(systemName: "cpu")
-                .font(.system(size: 40))
-                .foregroundStyle(.blue)
+            RobotIcon(frameIndex: 0, size: 56)
 
-            Text("Claude Usage")
+            Text("Token Meter for Claude")
                 .font(.title2.bold())
 
-            Text("Claude Code의 토큰 사용량을 메뉴바에서 확인하세요.\n시작하려면 Claude Code 설정 폴더 접근을 허용해주세요.")
+            Text("See your Claude Code usage in the menu bar. Click below, then press Allow.")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .font(.callout)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
 
             if let error = errorMessage {
                 Text(error)
@@ -25,37 +25,69 @@ struct OnboardingView: View {
                     .font(.caption)
             }
 
-            Button("~/.claude 폴더 선택") {
+            Button("Allow access to ~/.claude") {
                 selectFolder()
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
 
-            Text("선택 → 앱이 설정 파일을 자동으로 구성합니다.")
+            Text("The .claude folder is already selected — just press Allow.")
                 .font(.caption)
                 .foregroundStyle(.tertiary)
+
+            Divider()
+
+            // Path for users without Claude Code (and App Store reviewers).
+            // The sandbox prevents detecting whether it's installed, so instead
+            // of branching we offer a demo preview or a link to install it.
+            VStack(spacing: 6) {
+                Text("Don't have Claude Code yet?")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                HStack(spacing: 12) {
+                    Button("Preview with sample data") {
+                        model.loadDemoData()
+                    }
+                    .buttonStyle(.link)
+                    Link("Install Claude Code", destination: URL(string: "https://claude.com/claude-code")!)
+                }
+                .font(.caption)
+            }
         }
         .padding(28)
         .frame(width: 340)
     }
 
     private func selectFolder() {
+        let claudeDir = URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent(".claude")
+
         let panel = NSOpenPanel()
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
-        panel.message = "Claude Code 설정 폴더(~/.claude)를 선택해주세요."
-        panel.prompt = "허용"
-        panel.directoryURL = URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent(".claude")
+        panel.canCreateDirectories = false
+        panel.title = "Token Meter — Grant Access"
+        panel.message = "Press Allow to grant access to the .claude folder shown."
+        panel.prompt = "Allow"
+        // Open *inside* ~/.claude so the user only has to confirm — no navigating,
+        // no hidden-folder hunting. Clicking Allow grants this directory.
+        panel.directoryURL = claudeDir
 
-        guard panel.runModal() == .OK, let url = panel.url else { return }
+        guard panel.runModal() == .OK else { return }
+
+        // If the user confirmed without selecting an item, the panel authorizes the
+        // directory it was showing — fall back to that.
+        guard let url = panel.url ?? panel.directoryURL else {
+            errorMessage = "Couldn't read the folder. Please try again."
+            return
+        }
 
         do {
             try BookmarkManager.shared.saveBookmark(for: url)
             try HookInstaller.install(in: url)
             model.onboardingCompleted()
         } catch {
-            errorMessage = "설정 실패: \(error.localizedDescription)"
+            errorMessage = "Setup failed: \(error.localizedDescription)"
         }
     }
 }

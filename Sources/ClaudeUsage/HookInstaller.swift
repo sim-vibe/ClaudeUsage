@@ -1,35 +1,33 @@
 import Foundation
 
 enum HookInstaller {
+    // Uses `plutil` only — built into every macOS install, so no python3
+    // (which is absent on Macs without Xcode Command Line Tools) is required.
     static let hookScriptContent = """
     #!/bin/bash
-    # Installed by Claude Usage app
+    # Installed by Token Meter for Claude
     input=$(cat)
+    widgets="$HOME/.claude/widgets"
+    mkdir -p "$widgets"
 
-    python3 -c "
-    import json, sys, os
-    d = json.load(sys.stdin)
-    rl = d.get('rate_limits', {})
-    if not rl:
-        sys.exit(0)
-    path = os.path.expanduser('~/.claude/widgets/rate_limits.json')
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    new = json.dumps(rl, sort_keys=True)
-    with open(path, 'w') as f:
-        f.write(new)
-    " <<< \"$input\"
+    # Save the rate_limits object to a file (atomic; only on success).
+    tmp=$(mktemp)
+    if printf '%s' "$input" | plutil -extract rate_limits json -o "$tmp" - 2>/dev/null; then
+        mv "$tmp" "$widgets/rate_limits.json"
+    else
+        rm -f "$tmp"
+    fi
 
-    python3 -c "
-    import json, sys
-    d = json.load(sys.stdin)
-    rl = d.get('rate_limits', {})
-    fh = rl.get('five_hour', {})
-    sd = rl.get('seven_day', {})
-    parts = []
-    if fh: parts.append(f\\\"5h:{fh.get('used_percentage',0):.0f}%\\\")
-    if sd: parts.append(f\\\"7d:{sd.get('used_percentage',0):.0f}%\\\")
-    print(' | '.join(parts))
-    " <<< \"$input\" 2>/dev/null
+    # Emit the Claude Code status line (e.g. "5h:11% | 7d:16%").
+    fh=$(printf '%s' "$input" | plutil -extract rate_limits.five_hour.used_percentage raw -o - - 2>/dev/null)
+    sd=$(printf '%s' "$input" | plutil -extract rate_limits.seven_day.used_percentage raw -o - - 2>/dev/null)
+    line=""
+    [ -n "$fh" ] && line="5h:${fh%.*}%"
+    if [ -n "$sd" ]; then
+        [ -n "$line" ] && line="$line | "
+        line="${line}7d:${sd%.*}%"
+    fi
+    echo "$line"
     """
 
     static func install(in claudeDir: URL) throws {

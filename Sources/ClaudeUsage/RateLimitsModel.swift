@@ -2,8 +2,14 @@ import Foundation
 import Combine
 
 struct RateWindow: Codable {
-    let used_percentage: Int
+    // Claude Code sometimes sends a fractional percentage (e.g. 14.0000001),
+    // so this must be a Double — decoding into Int would fail and the whole
+    // payload would be silently dropped.
+    let used_percentage: Double
     let resets_at: TimeInterval
+
+    /// Whole-number percentage for display.
+    var pct: Int { Int(used_percentage.rounded()) }
 }
 
 struct RateLimits: Codable {
@@ -16,7 +22,9 @@ final class RateLimitsModel: ObservableObject {
     @Published var rateLimits: RateLimits?
     @Published var fileAge: TimeInterval = 0
     @Published var isOnboarded: Bool = false
+    @Published var isDemo: Bool = false
     @Published var frameIndex: Int = 0
+    @Published var lastLoaded: Date?
 
     private var fileWatcher: FileWatcher?
     private var animationTimer: Timer?
@@ -32,8 +40,35 @@ final class RateLimitsModel: ObservableObject {
     }
 
     func onboardingCompleted() {
+        isDemo = false
         isOnboarded = true
         startWatching()
+    }
+
+    /// Re-read the rate limits file on demand (Refresh button).
+    func refresh() {
+        guard let url = rateLimitsURL() else { return }
+        load(from: url)
+    }
+
+    /// Populate sample data so the UI can be evaluated without Claude Code
+    /// installed (used by App Store reviewers and for a quick preview).
+    func loadDemoData() {
+        isDemo = true
+        let now = Date().timeIntervalSince1970
+        rateLimits = RateLimits(
+            five_hour: RateWindow(used_percentage: 42, resets_at: now + 3 * 3600),
+            seven_day: RateWindow(used_percentage: 18, resets_at: now + 4 * 24 * 3600)
+        )
+        fileAge = 0
+        lastLoaded = Date()
+    }
+
+    /// Leave demo mode and return to the onboarding screen.
+    func exitDemo() {
+        isDemo = false
+        rateLimits = nil
+        lastLoaded = nil
     }
 
     private func startWatching() {
@@ -55,6 +90,7 @@ final class RateLimitsModel: ObservableObject {
                 self?.rateLimits = rl
                 let modDate = (try? url.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date()
                 self?.fileAge = Date().timeIntervalSince(modDate) / 60
+                self?.lastLoaded = Date()
             }
         }
     }

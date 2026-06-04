@@ -2,19 +2,25 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en</string>
     <key>LSUIElement</key>
     <true/>
     <key>CFBundleName</key>
-    <string>Claude Usage</string>
+    <string>Token Meter</string>
     <key>CFBundleDisplayName</key>
-    <string>Claude Usage</string>
+    <string>Token Meter for Claude</string>
     <key>CFBundleIdentifier</key>
-    <string>com.yourname.claude-usage</string>
+    <string>com.simvibe.ClaudeUsage</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>CFBundleShortVersionString</key>
     <string>1.0.0</string>
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.developer-tools</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>13.0</string>
     <key>NSHumanReadableCopyright</key>
-    <string>Copyright © 2026</string>
+    <string>Copyright © 2026 Keyz. All rights reserved.</string>
 </dict>
 </plist>
