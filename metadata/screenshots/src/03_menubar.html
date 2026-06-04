@@ -1,0 +1,63 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+:root{--teal:#3fe3cc;--white:#f2f7f9;--muted:#9db1bc;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:1280px;height:800px;overflow:hidden;}
+body{font-family:-apple-system,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;
+  background:
+    radial-gradient(820px 560px at 86% 30%, rgba(63,227,204,.13), transparent 60%),
+    radial-gradient(700px 520px at 20% 92%, rgba(47,111,237,.12), transparent 60%),
+    linear-gradient(158deg,#0b222b 0%,#091622 55%,#060f18 100%);
+  -webkit-font-smoothing:antialiased;position:relative;}
+/* menu bar */
+.menubar{position:absolute;top:0;left:0;width:1280px;height:38px;display:flex;align-items:center;
+  justify-content:space-between;padding:0 16px;background:rgba(15,17,21,.72);
+  border-bottom:.5px solid rgba(255,255,255,.06);backdrop-filter:blur(20px);}
+.mb-left{display:flex;gap:21px;color:rgba(255,255,255,.5);font-size:13.5px;font-weight:500;}
+.mb-left .app{color:#fff;font-weight:700;}
+.mb-right{display:flex;align-items:center;gap:16px;}
+.chip{display:flex;align-items:center;gap:7px;color:#fff;font-size:13.5px;font-weight:600;
+  padding:5px 9px;border-radius:6px;background:rgba(255,255,255,.17);}
+.chip img{height:15px;image-rendering:pixelated;}
+.clock{color:#e7eaef;font-size:13.5px;}
+/* dropdown anchored under chip */
+.card{position:absolute;top:48px;right:58px;width:362px;border-radius:16px;overflow:hidden;
+  background:linear-gradient(180deg,#2c3038 0%,#23262d 100%);
+  box-shadow:0 30px 64px rgba(0,0,0,.62),inset 0 0 0 .5px rgba(255,255,255,.1);}
+.sec{padding:15px 18px 13px;}
+.r1{display:flex;justify-content:space-between;align-items:baseline;}
+.ttl{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-weight:700;font-size:15px;color:#f3f4f6;letter-spacing:-.3px;}
+.pct{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:14px;color:#c5c8cf;}
+.bar{height:6px;border-radius:3px;background:rgba(120,160,255,.18);margin:11px 0 10px;overflow:hidden;}
+.fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#0a84ff,#3f9bff);}
+.rst{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:12.5px;color:#8b9099;}
+.dv{height:1px;background:rgba(255,255,255,.08);margin:0 18px;}
+.ft{display:flex;justify-content:space-between;align-items:center;padding:11px 18px;font-size:15.5px;color:#f3f4f6;}
+.ft .upd{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:12px;color:#8b9099;}
+/* headline bottom-left */
+.copy{position:absolute;left:80px;bottom:96px;}
+.badge{display:inline-block;color:var(--teal);border:1.5px solid rgba(63,227,204,.5);border-radius:999px;
+  font-size:13px;font-weight:700;letter-spacing:1.2px;padding:7px 15px;text-transform:uppercase;background:rgba(63,227,204,.06);}
+h1{color:var(--white);font-size:62px;line-height:1.06;font-weight:800;letter-spacing:-1.5px;margin:26px 0 0;}
+h1 .accent{color:var(--teal);}
+.sub{color:var(--muted);font-size:21px;line-height:1.45;margin-top:20px;max-width:520px;}
+</style></head>
+<body>
+  <div class="menubar">
+    <div class="mb-left"><span class="app">Finder</span><span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Window</span><span>Help</span></div>
+    <div class="mb-right"><div class="chip"><img src="robot_glyph.png">28% · 69%w</div><span class="clock">Fri  1:35 AM</span></div>
+  </div>
+  <div class="card">
+    <div class="sec"><div class="r1"><span class="ttl">Current session</span><span class="pct">28% used</span></div><div class="bar"><div class="fill" style="width:28%"></div></div><div class="rst">Resets today at 5:40am</div></div>
+    <div class="dv"></div>
+    <div class="sec"><div class="r1"><span class="ttl">Current week (all models)</span><span class="pct">69% used</span></div><div class="bar"><div class="fill" style="width:69%"></div></div><div class="rst">Resets Jun 9 at 11:00am</div></div>
+    <div class="dv"></div>
+    <div class="ft"><span>Refresh</span><span class="upd">Updated 1:35:51 am</span></div>
+    <div class="dv"></div>
+    <div class="ft"><span>About</span></div><div class="ft"><span>Contact Us</span></div><div class="ft"><span>Quit</span></div>
+  </div>
+  <div class="copy">
+    <span class="badge">Right in your menu bar</span>
+    <h1>One glance.<br>That’s the <span class="accent">whole app.</span></h1>
+    <p class="sub">No tab-switching, no commands — your Claude limits sit in the menu bar, always a click away.</p>
+  </div>
+</body></html>

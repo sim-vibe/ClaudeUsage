@@ -1,0 +1,65 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+:root{--teal:#3fe3cc;--white:#f2f7f9;--muted:#9db1bc;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:1280px;height:800px;overflow:hidden;}
+body{font-family:-apple-system,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;
+  background:
+    radial-gradient(900px 600px at 92% 8%, rgba(63,227,204,.14), transparent 60%),
+    radial-gradient(700px 520px at 80% 88%, rgba(47,111,237,.14), transparent 60%),
+    linear-gradient(158deg,#0b222b 0%,#091622 55%,#060f18 100%);
+  -webkit-font-smoothing:antialiased;display:flex;align-items:center;}
+.wrap{display:flex;width:100%;align-items:center;padding:0 76px;gap:40px;}
+.left{width:600px;}
+.right{flex:1;display:flex;justify-content:flex-end;position:relative;}
+.right::before{content:"";position:absolute;width:520px;height:520px;border-radius:50%;right:-40px;
+  background:radial-gradient(circle,rgba(63,227,204,.16),rgba(47,111,237,.08) 45%,transparent 70%);filter:blur(8px);}
+.badge{display:inline-block;color:var(--teal);border:1.5px solid rgba(63,227,204,.5);border-radius:999px;
+  font-size:13.5px;font-weight:700;letter-spacing:1.2px;padding:8px 16px;text-transform:uppercase;background:rgba(63,227,204,.06);}
+h1{color:var(--white);font-size:64px;line-height:1.06;font-weight:800;letter-spacing:-1.5px;margin:30px 0 0;}
+h1 .accent{color:var(--teal);}
+.sub{color:var(--muted);font-size:21px;line-height:1.45;margin-top:22px;max-width:470px;}
+.steps{margin-top:36px;display:flex;flex-direction:column;gap:18px;}
+.step{display:flex;align-items:center;gap:15px;}
+.num{width:34px;height:34px;border-radius:999px;flex:none;display:flex;align-items:center;justify-content:center;color:#06231f;font-weight:800;font-size:16px;background:var(--teal);}
+.step .t{color:#dfeaef;font-size:17px;font-weight:500;}
+/* dark onboarding card */
+.card{position:relative;width:374px;border-radius:16px;overflow:hidden;text-align:center;
+  background:linear-gradient(180deg,#2c3038 0%,#23262d 100%);
+  box-shadow:0 34px 70px rgba(0,0,0,.6),inset 0 0 0 .5px rgba(255,255,255,.09);padding:30px 26px 24px;}
+.robot{height:60px;image-rendering:pixelated;margin:4px auto 14px;display:block;}
+.name{font-size:23px;font-weight:800;color:#f3f4f6;letter-spacing:-.4px;}
+.desc{font-size:15px;color:#aab0b8;line-height:1.4;margin-top:12px;}
+.btn{margin-top:22px;display:block;width:100%;border:0;border-radius:11px;padding:13px 0;
+  background:linear-gradient(180deg,#3f9bff,#0a6fe6);color:#fff;font-size:15.5px;font-weight:700;
+  box-shadow:0 6px 16px rgba(10,132,255,.45);letter-spacing:-.2px;}
+.hint{font-size:12.5px;color:#838992;margin-top:14px;}
+.dv{height:1px;background:rgba(255,255,255,.09);margin:20px 4px 0;}
+.q{font-size:13.5px;color:#c5c8cf;margin-top:18px;font-weight:600;}
+.links{margin-top:9px;font-size:13.5px;}
+.links a{color:#5aa9ff;text-decoration:none;font-weight:600;}
+.links span{color:#5b636d;margin:0 12px;}
+</style></head>
+<body><div class="wrap">
+  <div class="left">
+    <span class="badge">One-time setup</span>
+    <h1>Set up in<br><span class="accent">one click.</span></h1>
+    <p class="sub">No config files, no terminal commands. Grant access once and you’re done.</p>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><div class="t">Press <b>Allow access to ~/.claude</b></div></div>
+      <div class="step"><div class="num">2</div><div class="t">The app configures Claude Code for you</div></div>
+      <div class="step"><div class="num">3</div><div class="t">Usage shows up in your menu bar — live</div></div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="card">
+      <img class="robot" src="robot_glyph.png">
+      <div class="name">Token Meter for Claude</div>
+      <div class="desc">See your Claude Code usage in the menu bar.<br>Click below, then press Allow.</div>
+      <button class="btn">Allow access to ~/.claude</button>
+      <div class="hint">The .claude folder is already selected — just press Allow.</div>
+      <div class="dv"></div>
+      <div class="q">Don’t have Claude Code yet?</div>
+      <div class="links"><a>Preview with sample data</a><span>·</span><a>Install Claude Code</a></div>
+    </div>
+  </div>
+</div></body></html>

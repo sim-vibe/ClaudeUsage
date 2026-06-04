@@ -147,11 +147,16 @@ Token Meter is an independent app, not affiliated with Anthropic. "Claude" is us
 
 ## Screenshots
 
-Currently 2 in ASC. macOS sizes: 1280×800 / 1440×900 / 2560×1600 / 2880×1800.
-Priority set:
-1. Menu bar dropdown with both progress bars populated (the money shot)
-2. Onboarding / "Preview with sample data" screen
-3. *(optional)* About panel or the menu bar item in context
+**Final set committed** under `metadata/screenshots/` (dark mode, 1280×800), source +
+regeneration notes in `metadata/screenshots/src/`. Replace the 2 currently in ASC with
+these 3, in order:
+1. `01_usage.png` — hero + live usage dropdown (the money shot)
+2. `02_onboarding.png` — one-click setup / onboarding card
+3. `03_menubar.png` — menu-bar context (chip + open dropdown)
+
+Dark set chosen on purpose: matches the app's real dark-mode appearance and suits the
+Claude Code audience. macOS accepts 1280×800 / 1440×900 / 2560×1600 / 2880×1800.
+(A light alternate of shots 1–2 also exists locally if ever needed.)
 
 ---
 

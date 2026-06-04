@@ -1,0 +1,65 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+:root{--teal:#3fe3cc;--white:#f2f7f9;--muted:#9db1bc;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:1280px;height:800px;overflow:hidden;}
+body{font-family:-apple-system,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;
+  background:
+    radial-gradient(900px 600px at 92% 8%, rgba(63,227,204,.14), transparent 60%),
+    radial-gradient(700px 520px at 80% 88%, rgba(47,111,237,.14), transparent 60%),
+    linear-gradient(158deg,#0b222b 0%,#091622 55%,#060f18 100%);
+  -webkit-font-smoothing:antialiased;display:flex;align-items:center;}
+.wrap{display:flex;width:100%;align-items:center;padding:0 76px;gap:40px;}
+.left{width:600px;}
+.right{flex:1;display:flex;justify-content:flex-end;position:relative;}
+.right::before{content:"";position:absolute;width:520px;height:520px;border-radius:50%;
+  right:-40px;background:radial-gradient(circle,rgba(63,227,204,.16),rgba(47,111,237,.08) 45%,transparent 70%);filter:blur(8px);}
+.badge{display:inline-block;color:var(--teal);border:1.5px solid rgba(63,227,204,.5);border-radius:999px;
+  font-size:13.5px;font-weight:700;letter-spacing:1.2px;padding:8px 16px;text-transform:uppercase;background:rgba(63,227,204,.06);}
+h1{color:var(--white);font-size:64px;line-height:1.06;font-weight:800;letter-spacing:-1.5px;margin:30px 0 0;}
+h1 .accent{color:var(--teal);}
+.sub{color:var(--muted);font-size:21px;line-height:1.45;margin-top:22px;max-width:480px;}
+.sub code{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:18px;color:#cfe0e6;}
+.features{margin-top:38px;display:flex;flex-direction:column;gap:20px;}
+.feat{display:flex;align-items:center;gap:15px;}
+.ic{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);}
+.feat .t{color:#eaf2f5;font-size:17.5px;font-weight:700;letter-spacing:-.2px;}
+.feat .d{color:#8aa0ab;font-size:14.5px;margin-top:2px;}
+/* dark menu-bar dropdown card */
+.card{position:relative;width:374px;border-radius:16px;overflow:hidden;
+  background:linear-gradient(180deg,#2c3038 0%,#23262d 100%);
+  box-shadow:0 34px 70px rgba(0,0,0,.6),inset 0 0 0 .5px rgba(255,255,255,.09);}
+.sec{padding:15px 18px 13px;}
+.r1{display:flex;justify-content:space-between;align-items:baseline;}
+.ttl{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-weight:700;font-size:15.5px;color:#f3f4f6;letter-spacing:-.3px;}
+.pct{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:14.5px;color:#c5c8cf;}
+.bar{height:6px;border-radius:3px;background:rgba(120,160,255,.18);margin:11px 0 10px;overflow:hidden;}
+.fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#0a84ff,#3f9bff);}
+.rst{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:12.5px;color:#8b9099;}
+.dv{height:1px;background:rgba(255,255,255,.08);margin:0 18px;}
+.ft{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;font-size:16px;color:#f3f4f6;font-weight:450;}
+.ft .upd{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:12px;color:#8b9099;}
+</style></head>
+<body><div class="wrap">
+  <div class="left">
+    <span class="badge">macOS menu bar app</span>
+    <h1>Always know<br>your <span class="accent">Claude limits.</span></h1>
+    <p class="sub">Your 5-hour session and weekly usage, live in the menu bar — the same data as Claude Code’s own <code>/usage</code>.</p>
+    <div class="features">
+      <div class="feat"><div class="ic" style="background:rgba(255,196,0,.16)">⚡️</div><div><div class="t">Live from API headers</div><div class="d">Same values as /usage. No estimation.</div></div></div>
+      <div class="feat"><div class="ic" style="background:rgba(91,141,243,.2)">📊</div><div><div class="t">5-hour session + weekly</div><div class="d">Progress bars with reset countdown.</div></div></div>
+      <div class="feat"><div class="ic" style="background:rgba(63,227,204,.16)">🛠️</div><div><div class="t">One-time setup</div><div class="d">Configures Claude Code automatically.</div></div></div>
+      <div class="feat"><div class="ic" style="background:rgba(160,170,180,.18)">🔒</div><div><div class="t">100% local &amp; private</div><div class="d">No data ever leaves your Mac.</div></div></div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="card">
+      <div class="sec"><div class="r1"><span class="ttl">Current session</span><span class="pct">28% used</span></div><div class="bar"><div class="fill" style="width:28%"></div></div><div class="rst">Resets today at 5:40am</div></div>
+      <div class="dv"></div>
+      <div class="sec"><div class="r1"><span class="ttl">Current week (all models)</span><span class="pct">69% used</span></div><div class="bar"><div class="fill" style="width:69%"></div></div><div class="rst">Resets Jun 9 at 11:00am</div></div>
+      <div class="dv"></div>
+      <div class="ft"><span>Refresh</span><span class="upd">Updated 1:35:51 am</span></div>
+      <div class="dv"></div>
+      <div class="ft"><span>About</span></div><div class="ft"><span>Contact Us</span></div><div class="ft"><span>Quit</span></div>
+    </div>
+  </div>
+</div></body></html>
