@@ -10,6 +10,7 @@ a native SwiftUI rewrite of an earlier SwiftBar + Python widget. **Target: Mac A
 |---|---|
 | Repo | `github.com/sim-vibe/ClaudeUsage` (origin/main) |
 | Local path | `~/Developer/ClaudeUsage` |
+| App Store Connect | Apple app ID **`6773230249`** · Team **Gwangseop Shim** (personal account) |
 | Bundle ID | `com.simvibe.ClaudeUsage` — **App Store identity, do NOT change** (also keyed to the saved folder-access bookmark) |
 | User-facing name | "Token Meter for Claude" (`CFBundleDisplayName` + App Store listing name) |
 | Bundle / executable / `PRODUCT_NAME` | **`Token Meter`** → bundle is `Token Meter.app`. No "ClaudeUsage" string is user-visible. |
@@ -104,18 +105,28 @@ Must be done on a machine signed into the Keyz/simvibe **Apple Developer account
 (the original dev Mac had none). The app icon and signing config already exist in
 the repo, so the work is now mostly account-side:
 
-1. **Signing** — open in Xcode, select the team so `DEVELOPMENT_TEAM` is set. The
-   project is already `CODE_SIGN_STYLE=Automatic` + `ENABLE_HARDENED_RUNTIME=YES`,
-   so no project edits should be needed — Archive → Distribute → upload.
-2. **App Store Connect** — create app record for `com.simvibe.ClaudeUsage` (name
-   "Token Meter for Claude"), screenshots, description, privacy nutrition label
-   ("no data collected").
-3. **Review risk** — reviewers won't have Claude Code → demo mode covers it; add an
-   App Review note ("requires Claude Code CLI; use *Preview with sample data*"); keep
-   "for Claude" naming + a non-affiliation note (Anthropic trademark).
-4. **Optional UX** — App Group container so the hook writes data the app reads with
+**App Store Connect record already set up** (app ID `6773230249`): name/subtitle/
+description/keywords, 2 screenshots, support+marketing+privacy URLs, price (free,
+175 countries), privacy ("no data collected", published), age 4+, category
+Developer Tools. So only the build upload remains:
+
+1. **Signing** — open in Xcode, select Team **Gwangseop Shim** so `DEVELOPMENT_TEAM`
+   is set. The project is already `CODE_SIGN_STYLE=Automatic` +
+   `ENABLE_HARDENED_RUNTIME=YES`, so no project edits needed.
+2. **Archive → Distribute → App Store Connect → Upload** (Release builds automatically).
+3. **Attach the build for review** — after upload (~5–10 min):
+   `https://appstoreconnect.apple.com/apps/6773230249/distribution/macos/version/inflight`
+   → pick the build in the **Build** section → **Submit for Review**.
+4. **Review risk** — reviewers won't have Claude Code → demo mode covers it; the App
+   Review note should say "requires Claude Code CLI; use *Preview with sample data*";
+   keep "for Claude" naming + a non-affiliation note (Anthropic trademark).
+5. **Optional UX** — App Group container so the hook writes data the app reads with
    zero permission (drops the folder-grant dialog for reads). Needs an App Group
    entitlement tied to the Apple account.
+
+> **Support email mismatch — reconcile:** the app's Contact Us uses
+> `support@keyz.dev`, but the App Store Connect support contact was set to
+> `ccusage@icloud.com`. Pick one before submitting.
 
 ## Machine-local (NOT in the repo)
 
