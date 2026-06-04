@@ -35,4 +35,16 @@ final class BookmarkManager {
         block()
         if accessed { url.stopAccessingSecurityScopedResource() }
     }
+
+    /// Begin long-lived security-scoped access for continuous work (e.g. a file
+    /// watcher's `open()`), balanced by `endAccess`. Returns the URL access was
+    /// started on, or nil if there's no bookmark / access couldn't be started.
+    func beginAccess() -> URL? {
+        guard let url = claudeDirectoryURL else { return nil }
+        return url.startAccessingSecurityScopedResource() ? url : nil
+    }
+
+    func endAccess(_ url: URL) {
+        url.stopAccessingSecurityScopedResource()
+    }
 }

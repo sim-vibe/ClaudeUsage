@@ -95,9 +95,13 @@ killall cfprefsd
   `realHomeDirectory()` via `getpwuid` so it points at the *real* `~/.claude`, not
   the sandbox container; rolls back the bookmark on install failure), "Preview with
   sample data" + "Install Claude Code", Exit-demo back to onboarding.
-- **`FileWatcher`** handles atomic replace (`.delete`/`.rename`) and re-establishes
-  the watch — required because the hook updates `rate_limits.json` via `mv` (atomic),
-  which a naive write-only watcher would miss after the first update.
+- **`FileWatcher`** auto-refresh: the hook updates `rate_limits.json` via `mv`
+  (atomic inode swap). Two things are required for live updates in the sandbox and
+  both are in place: (1) hold security-scoped access for the watcher's lifetime
+  (`BookmarkManager.beginAccess/endAccess`) — otherwise `open(O_EVTONLY)` gets EPERM
+  and the watch never establishes (symptom: data loads once at launch, then only
+  updates on manual Refresh); (2) watch the **parent directory** (stable inode),
+  not the file, so the atomic replace is seen as a directory write.
 
 ## Remaining — for App Store
 
@@ -144,8 +148,8 @@ Developer Tools. So only the build upload remains:
 | `Sources/ClaudeUsage/OnboardingView.swift` | Onboarding + `NSOpenPanel` grant |
 | `Sources/ClaudeUsage/AboutView.swift` | About popup + its window (`AboutPanel`) |
 | `Sources/ClaudeUsage/HookInstaller.swift` | Installs `plutil` hook + patches `settings.json` |
-| `Sources/ClaudeUsage/BookmarkManager.swift` | Security-scoped bookmark for `~/.claude` |
-| `Sources/ClaudeUsage/FileWatcher.swift` | Watches `rate_limits.json` |
+| `Sources/ClaudeUsage/BookmarkManager.swift` | Security-scoped bookmark for `~/.claude` (`withAccess` for reads; `beginAccess`/`endAccess` for the long-lived watcher) |
+| `Sources/ClaudeUsage/FileWatcher.swift` | Watches the `widgets/` dir (holds access) → live updates |
 | `Sources/ClaudeUsage/RateLimitsModel.swift` | State + load/refresh/demo |
 | `Sources/ClaudeUsage/Assets.xcassets/AppIcon.appiconset` | App icon (1024px set; `AppIcon`) |
 | `Info.plist` / `project.yml` | Bundle config / xcodegen spec (`.xcodeproj` is generated, gitignored) |
