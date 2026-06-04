@@ -10,9 +10,10 @@ a native SwiftUI rewrite of an earlier SwiftBar + Python widget. **Target: Mac A
 |---|---|
 | Repo | `github.com/sim-vibe/ClaudeUsage` (origin/main) |
 | Local path | `~/Developer/ClaudeUsage` |
-| Bundle ID | `com.simvibe.ClaudeUsage` — **App Store identity, do NOT change** |
-| User-facing name | "Token Meter for Claude" (short: "Token Meter") |
-| Internal target/module | `ClaudeUsage` (not user-visible) |
+| Bundle ID | `com.simvibe.ClaudeUsage` — **App Store identity, do NOT change** (also keyed to the saved folder-access bookmark) |
+| User-facing name | "Token Meter for Claude" (`CFBundleDisplayName` + App Store listing name) |
+| Bundle / executable / `PRODUCT_NAME` | **`Token Meter`** → bundle is `Token Meter.app`. No "ClaudeUsage" string is user-visible. |
+| Internal Xcode target / scheme | `ClaudeUsage` (dev-only, not in the bundle, not user-visible) |
 | Copyright | `Copyright © 2026 Keyz. All rights reserved.` |
 | Support email | `support@keyz.dev` (Contact Us → mailto) |
 
@@ -36,19 +37,27 @@ a native SwiftUI rewrite of an earlier SwiftBar + Python widget. **Target: Mac A
 Requires **Xcode** + **xcodegen**. The `.xcodeproj` and `build/` are gitignored and
 regenerated:
 
+Requires **Xcode** + **xcodegen**. `project.yml` is configured for **App Store**
+distribution (`CODE_SIGN_STYLE=Automatic`, `ENABLE_HARDENED_RUNTIME=YES`,
+`ASSETCATALOG_COMPILER_APPICON_NAME=AppIcon`), so a **local** build on a machine
+with no Apple account must override those at the CLI:
+
 ```bash
 brew install xcodegen
 cd ~/Developer/ClaudeUsage
 xcodegen generate
-xcodebuild -project ClaudeUsage.xcodeproj -scheme ClaudeUsage -configuration Release \
+xcodebuild -project ClaudeUsage.xcodeproj -scheme ClaudeUsage -configuration Debug \
   -derivedDataPath build \
-  CODE_SIGN_IDENTITY="-" CODE_SIGNING_REQUIRED=YES CODE_SIGNING_ALLOWED=YES build
-open "build/Build/Products/Release/Token Meter.app"
+  CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="-" \
+  CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=YES \
+  ENABLE_HARDENED_RUNTIME=NO build
+open "build/Build/Products/Debug/Token Meter.app"
 ```
 
 `CODE_SIGN_IDENTITY="-"` = ad-hoc "Sign to Run Locally"; sandbox + security-scoped
-bookmarks work on the same machine. (First-ever Xcode use on a machine may need
-`xcodebuild -runFirstLaunch`.)
+bookmarks work on the same machine. On a machine **with** the Apple account, drop
+the overrides and just set `DEVELOPMENT_TEAM` (see "Remaining"). (First-ever Xcode
+use on a machine may need `xcodebuild -runFirstLaunch`.)
 
 To re-test onboarding after granting once, clear the saved bookmark:
 ```bash
@@ -58,7 +67,18 @@ killall cfprefsd
 
 ## Status — DONE
 
-- Native rewrite, verified end-to-end on the original dev Mac.
+- Native rewrite, verified end-to-end on the original dev Mac (build + install +
+  live data + auto-refresh). Latest commit `b1d9f17`, pushed to `origin/main`.
+- **Merge resolved** — the repo had diverged into two parallel branches:
+  *(a)* App Store assets/config + app icon (`Assets.xcassets/AppIcon.appiconset`,
+  Automatic signing, hardened runtime), and *(b)* the native UI / plutil / demo
+  rewrite. Merged taking the better side per concern; `.xcodeproj` is now
+  gitignored (xcodegen is the single source of truth).
+- **App icon** — full 1024px icon set is committed under
+  `Sources/ClaudeUsage/Assets.xcassets/AppIcon.appiconset` and bundled
+  (`AppIcon.icns` + `Assets.car`). *(Was the #1 remaining item — now done.)*
+- **Name unified** — `PRODUCT_NAME = "Token Meter"`; no "ClaudeUsage" string is
+  user-visible. Display/App Store name stays "Token Meter for Claude".
 - `plutil` hook (python3 dependency removed).
 - `used_percentage` decoded as **Double** — Claude Code sends fractional values;
   Int decoding silently dropped the whole payload.
@@ -67,22 +87,33 @@ killall cfprefsd
   rows (`MenuRowButtonStyle`), left-aligned to section titles.
 - Footer: **Refresh** ("Refreshing…" feedback + "Updated h:mm:ss") / **About** /
   **Contact Us** / **Quit**.
-- **About** popup: robot icon, name, version, copyright, full-width OK button.
-- **Onboarding**: robot icon, 2-line copy, 1-click Allow panel, "Preview with
+- **About** popup: robot icon, name, version, copyright, full-width OK button;
+  window sized to content (`fittingSize`) with `animationBehavior = .none` so it
+  opens centered with **no jitter**.
+- **Onboarding**: robot icon, 2-line copy, 1-click Allow panel (uses
+  `realHomeDirectory()` via `getpwuid` so it points at the *real* `~/.claude`, not
+  the sandbox container; rolls back the bookmark on install failure), "Preview with
   sample data" + "Install Claude Code", Exit-demo back to onboarding.
+- **`FileWatcher`** handles atomic replace (`.delete`/`.rename`) and re-establishes
+  the watch — required because the hook updates `rate_limits.json` via `mv` (atomic),
+  which a naive write-only watcher would miss after the first update.
 
 ## Remaining — for App Store
 
-1. **App icon** (1024px set) — none yet; menu bar + About use the 20px robot pixel art.
-2. **Signing** — the original dev Mac had **no Apple signing identity / Xcode account**.
-   Upload must run on a machine signed into the Keyz/simvibe **Apple Developer account**:
-   set `DEVELOPMENT_TEAM` + `CODE_SIGN_STYLE=Automatic`, archive in Xcode → upload.
-3. **App Store Connect** — create app record for `com.simvibe.ClaudeUsage`,
-   screenshots, description, privacy nutrition label ("no data collected").
-4. **Review risk** — reviewers won't have Claude Code → demo mode covers it; add an
-   App Review note ("requires Claude Code CLI, use Preview with sample data"); keep
+Must be done on a machine signed into the Keyz/simvibe **Apple Developer account**
+(the original dev Mac had none). The app icon and signing config already exist in
+the repo, so the work is now mostly account-side:
+
+1. **Signing** — open in Xcode, select the team so `DEVELOPMENT_TEAM` is set. The
+   project is already `CODE_SIGN_STYLE=Automatic` + `ENABLE_HARDENED_RUNTIME=YES`,
+   so no project edits should be needed — Archive → Distribute → upload.
+2. **App Store Connect** — create app record for `com.simvibe.ClaudeUsage` (name
+   "Token Meter for Claude"), screenshots, description, privacy nutrition label
+   ("no data collected").
+3. **Review risk** — reviewers won't have Claude Code → demo mode covers it; add an
+   App Review note ("requires Claude Code CLI; use *Preview with sample data*"); keep
    "for Claude" naming + a non-affiliation note (Anthropic trademark).
-5. **Optional UX** — App Group container so the hook writes data the app reads with
+4. **Optional UX** — App Group container so the hook writes data the app reads with
    zero permission (drops the folder-grant dialog for reads). Needs an App Group
    entitlement tied to the Apple account.
 
@@ -105,4 +136,5 @@ killall cfprefsd
 | `Sources/ClaudeUsage/BookmarkManager.swift` | Security-scoped bookmark for `~/.claude` |
 | `Sources/ClaudeUsage/FileWatcher.swift` | Watches `rate_limits.json` |
 | `Sources/ClaudeUsage/RateLimitsModel.swift` | State + load/refresh/demo |
-| `Info.plist` / `project.yml` | Bundle config / xcodegen spec |
+| `Sources/ClaudeUsage/Assets.xcassets/AppIcon.appiconset` | App icon (1024px set; `AppIcon`) |
+| `Info.plist` / `project.yml` | Bundle config / xcodegen spec (`.xcodeproj` is generated, gitignored) |
