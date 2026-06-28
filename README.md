@@ -1,4 +1,4 @@
-# Token Meter for Claude
+# Token Usage for Claude
 
 A macOS menu bar app that shows your Claude Code token usage in real time.
 

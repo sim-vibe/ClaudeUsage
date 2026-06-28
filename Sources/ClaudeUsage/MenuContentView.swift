@@ -136,11 +136,6 @@ struct MenuContentView: View {
                 }
                 .buttonStyle(MenuRowButtonStyle())
 
-                Button { contactSupport() } label: {
-                    HStack { Text("Contact Us"); Spacer() }
-                }
-                .buttonStyle(MenuRowButtonStyle())
-
                 Divider()
                     .padding(.horizontal, 5)
                     .padding(.vertical, 3)
@@ -198,12 +193,6 @@ struct MenuContentView: View {
 
     private func showAbout() {
         AboutPanel.show()
-    }
-
-    private func contactSupport() {
-        if let url = URL(string: "mailto:support@keyz.dev?subject=Token%20Meter%20for%20Claude") {
-            NSWorkspace.shared.open(url)
-        }
     }
 
     private func formatReset(_ epoch: TimeInterval) -> String {

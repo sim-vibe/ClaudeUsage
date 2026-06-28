@@ -11,7 +11,7 @@ struct OnboardingView: View {
         VStack(spacing: 16) {
             RobotIcon(frameIndex: 0, size: 56)
 
-            Text("Token Meter for Claude")
+            Text("Token Usage for Claude")
                 .font(.title2.bold())
 
             Text("See your Claude Code usage in the menu bar. Click below, then press Allow.")
@@ -91,7 +91,7 @@ struct OnboardingView: View {
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
         panel.canCreateDirectories = false
-        panel.title = "Token Meter — Grant Access"
+        panel.title = "Token Usage — Grant Access"
         panel.message = "Press Allow to grant access to the .claude folder shown."
         panel.prompt = "Allow"
         panel.showsHiddenFiles = true

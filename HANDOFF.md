@@ -1,4 +1,4 @@
-# Token Meter for Claude — Handoff
+# Token Usage for Claude — Handoff
 
 macOS menu bar app that shows Claude Code token usage (5-hour session + 7-day
 weekly), reading the same rate-limit data Claude Code's `/usage` reports. This is
@@ -12,8 +12,8 @@ a native SwiftUI rewrite of an earlier SwiftBar + Python widget. **Target: Mac A
 | Local path | `~/Developer/ClaudeUsage` |
 | App Store Connect | Apple app ID **`6773230249`** · Team **Gwangseop Shim** (personal account) |
 | Bundle ID | `com.simvibe.ClaudeUsage` — **App Store identity, do NOT change** (also keyed to the saved folder-access bookmark) |
-| User-facing name | "Token Meter for Claude" (`CFBundleDisplayName` + App Store listing name) |
-| Bundle / executable / `PRODUCT_NAME` | **`Token Meter`** → bundle is `Token Meter.app`. No "ClaudeUsage" string is user-visible. |
+| User-facing name | "Token Usage for Claude" (`CFBundleDisplayName` + App Store listing name) |
+| Bundle / executable / `PRODUCT_NAME` | **`Token Usage`** → bundle is `Token Usage.app`. No "ClaudeUsage" string is user-visible. |
 | Internal Xcode target / scheme | `ClaudeUsage` (dev-only, not in the bundle, not user-visible) |
 | Copyright | `Copyright © 2026 Keyz. All rights reserved.` |
 | Support email | `support@keyz.dev` (Contact Us → mailto) |
@@ -52,7 +52,7 @@ xcodebuild -project ClaudeUsage.xcodeproj -scheme ClaudeUsage -configuration Deb
   CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="-" \
   CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=YES \
   ENABLE_HARDENED_RUNTIME=NO build
-open "build/Build/Products/Debug/Token Meter.app"
+open "build/Build/Products/Debug/Token Usage.app"
 ```
 
 `CODE_SIGN_IDENTITY="-"` = ad-hoc "Sign to Run Locally"; sandbox + security-scoped
@@ -78,8 +78,8 @@ killall cfprefsd
 - **App icon** — full 1024px icon set is committed under
   `Sources/ClaudeUsage/Assets.xcassets/AppIcon.appiconset` and bundled
   (`AppIcon.icns` + `Assets.car`). *(Was the #1 remaining item — now done.)*
-- **Name unified** — `PRODUCT_NAME = "Token Meter"`; no "ClaudeUsage" string is
-  user-visible. Display/App Store name stays "Token Meter for Claude".
+- **Name unified** — `PRODUCT_NAME = "Token Usage"`; no "ClaudeUsage" string is
+  user-visible. Display/App Store name is "Token Usage for Claude".
 - `plutil` hook (python3 dependency removed).
 - `used_percentage` decoded as **Double** — Claude Code sends fractional values;
   Int decoding silently dropped the whole payload.

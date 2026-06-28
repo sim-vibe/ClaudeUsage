@@ -5,7 +5,7 @@ enum HookInstaller {
     // (which is absent on Macs without Xcode Command Line Tools) is required.
     static let hookScriptContent = """
     #!/bin/bash
-    # Installed by Token Meter for Claude
+    # Installed by Token Usage for Claude
     input=$(cat)
     widgets="$HOME/.claude/widgets"
     mkdir -p "$widgets"

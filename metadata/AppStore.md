@@ -1,4 +1,4 @@
-# App Store Metadata — Token Meter for Claude
+# App Store Metadata — Token Usage for Claude
 
 Source of truth for the Mac App Store listing copy. Paste into App Store Connect
 (app ID `6773230249`). Character counts are App Store hard limits — stay at or
@@ -19,7 +19,8 @@ under them. Locale: **en** (`CFBundleDevelopmentRegion=en`).
 4. 🟡 **Content Rights** (App Information) — currently NOT set up. Set to "does not
    contain, show, or access third-party content" (the app shows only the user's own
    local usage data). Required before submission.
-5. 🟢 **Subtitle** — KEEP current `Claude Code usage monitor` (good — see below).
+5. 🟡 **Subtitle** — CHANGE `Claude Code usage monitor` → `Claude usage menu bar monitor`
+   (lead with the exact priority phrase "Claude usage"; see below).
 6. 🟢 **Secondary category** — optional: add **Productivity**.
 7. 🟢 **Promotional Text** — current copy is good; keep.
 8. ⚠️ **Support contact email** — `ccusage@icloud.com` → `support@keyz.dev`.
@@ -31,19 +32,34 @@ under them. Locale: **en** (`CFBundleDevelopmentRegion=en`).
 ## App Name — limit 30
 
 ```
-Token Meter for Claude
+Token Usage for Claude
 ```
 `22/30` ✓ — matches `CFBundleDisplayName`. Do **not** change.
 
-## Subtitle — limit 30  →  KEEP CURRENT
+> ### 🔎 How App Store search actually indexes (read first)
+> Apple indexes **only three fields** for search: **app name**, **subtitle**, and the
+> **keywords field**. The **description and promotional text are NOT indexed for search**
+> — they only affect conversion *after* a user finds the listing. So all discovery SEO
+> lives in name + subtitle + keywords; Apple unions the words across the three and also
+> rewards exact-phrase + early-position matches.
+>
+> **Target queries (per product decision): `claude` and `claude usage`.** The app name
+> `Token Usage for Claude` already carries *both* target words in the highest-weight
+> field, so "claude usage" is matched at the word level out of the box. The subtitle is
+> then tuned to surface the **exact adjacent phrase "Claude usage" first**, which is the
+> strongest ranking signal for that query.
 
-**Current (live) — keep:**
+## Subtitle — limit 30  →  CHANGE
+
+**Recommended (replace current `Claude Code usage monitor`):**
 ```
-Claude Code usage monitor
+Claude usage menu bar monitor
 ```
-`25/30` ✓ — indexes claude, code, usage, monitor. This is the right call: "token" is
-already in the **app name**, so spending the subtitle on "monitor" (a search term the
-name/keywords don't otherwise cover) is more efficient than repeating "token".
+`29/30` ✓ — opens with the exact target phrase **"Claude usage"** (adjacent + first =
+best signal for the priority query), then adds `menu` + `bar` + `monitor`. Drops `code`
+vs the old subtitle — recovered in the keywords field below (most users search `claude`
+/ `claude usage`, not `claude code`, so spend the highest-weight field on the priority
+phrase).
 
 ## Keywords — limit 100 (comma-separated, NO spaces after commas)
 
@@ -52,22 +68,29 @@ name/keywords don't otherwise cover) is more efficient than repeating "token".
 Problems with the live set:
 - `claude`, `anthropic`, `claude code` → **third-party trademarks as standalone
   keywords** = common rejection (Guideline 2.3.7 / 5.2.5). Remove.
-- `claude`, `token` → already in the **app name**, which Apple indexes separately →
-  duplicates, wasted space.
+- `claude`, `token`, `usage` → already in the **app name** (and `usage` again in the
+  subtitle), which Apple indexes separately → duplicates, wasted space.
 - `ai monitor` → a fixed phrase; Apple auto-combines standalone words, so
   `AI` + `monitor` as separate terms reaches more queries.
 
 **Recommended (replace with this):**
 ```
-rate limit,menu bar,menubar,tracker,quota,AI,CLI,developer,statusline,session,coding,widget,context
+code,rate limit,tracker,quota,menubar,AI,CLI,developer,statusline,session,widget,context
 ```
-`99/100` ✓ — no trademarks, no duplication with name/subtitle.
+`95/100` ✓ — no trademarks, no duplication with name/subtitle. `code` here recombines
+with `claude` from the name to still cover **"claude code"**; `menubar` (no space)
+catches the unspaced search variant of the subtitle's "menu bar".
 
-> Keyword principle: Apple already indexes every word in the **name** (token, meter,
-> claude) and **subtitle** (claude, code, usage, monitor) — search uses name + subtitle
-> + keywords combined. Never repeat those 6 words here. Note `monitor` is intentionally
-> dropped from keywords because it's now covered by the subtitle; the freed space goes
-> to `widget` + `context`.
+> Keyword principle: Apple already indexes every word in the **name** (token, usage,
+> claude) and **subtitle** (claude, usage, menu, bar, monitor) — search unions name +
+> subtitle + keywords. Never repeat those words in the keywords field.
+>
+> **On the top-priority `claude` query:** "claude" is intentionally kept OUT of the
+> keywords field. It already sits in the **app name** — the single highest-weight,
+> already-indexed placement — so it ranks for "claude" without a keyword entry. Adding
+> standalone `claude` to keywords adds the 2.3.7/5.2.5 trademark-rejection risk for only
+> marginal weight gain. If you decide the "claude" rank is worth that risk, the lowest-
+> risk lever is the subtitle/description phrasing (descriptive use), not a bare keyword.
 
 ## Promotional Text — limit 170 (editable anytime, NO review needed)
 
@@ -82,7 +105,7 @@ Monitor your Claude Code token usage right from the menu bar. See your 5-hour se
 Live copy is strong. Only two adds: the demo-mode line (helps reviewers) and the
 non-affiliation footer (trademark safety). Final:
 ```
-Token Meter for Claude shows your Claude Code token usage directly in your Mac menu bar — no tab switching, no commands to run.
+Token Usage for Claude shows your Claude Code token usage directly in your Mac menu bar — no tab switching, no commands to run.
 
 WHAT IT SHOWS
 • Current session (5-hour rolling window) — percentage used and time until reset
@@ -106,7 +129,7 @@ REQUIREMENTS
 • Claude Code CLI installed (claude.ai/code)
 
 —
-Token Meter for Claude is an independent app and is not affiliated with, endorsed by, or sponsored by Anthropic. "Claude" is a trademark of Anthropic, PBC, used here to describe compatibility.
+Token Usage for Claude is an independent app and is not affiliated with, endorsed by, or sponsored by Anthropic. "Claude" is a trademark of Anthropic, PBC, used here to describe compatibility.
 ```
 ≈ `1050/4000` ✓ — additions vs live are **bold-italic** in the action list above.
 
@@ -114,7 +137,7 @@ Token Meter for Claude is an independent app and is not affiliated with, endorse
 
 For the **1.0** initial release:
 ```
-Initial release. Token Meter shows your Claude Code session and weekly token usage right in the menu bar.
+Initial release. Token Usage for Claude shows your Claude Code session and weekly token usage right in the menu bar.
 ```
 
 ---
@@ -142,7 +165,7 @@ Initial release. Token Meter shows your Claude Code session and weekly token usa
 ```
 This app displays Claude Code CLI token-usage data and requires the Claude Code CLI to be installed to show live data. Reviewers without Claude Code installed can tap "Preview with sample data" on the onboarding screen to see the full interface with demo data.
 
-Token Meter is an independent app, not affiliated with Anthropic. "Claude" is used only to describe compatibility.
+Token Usage for Claude is an independent app, not affiliated with Anthropic. "Claude" is used only to describe compatibility.
 ```
 
 ## Screenshots

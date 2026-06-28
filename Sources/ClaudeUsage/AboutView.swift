@@ -18,7 +18,7 @@ struct AboutView: View {
         VStack(spacing: 12) {
             RobotIcon(frameIndex: 0, size: 64)
 
-            Text("Token Meter for Claude")
+            Text("Token Usage for Claude")
                 .font(.headline)
 
             Text("Version \(version)")
@@ -31,6 +31,14 @@ struct AboutView: View {
                     .foregroundStyle(.tertiary)
                     .multilineTextAlignment(.center)
             }
+
+            Button("Contact") {
+                if let url = URL(string: "https://keyz.dev/contact/") {
+                    NSWorkspace.shared.open(url)
+                }
+            }
+            .buttonStyle(.link)
+            .font(.caption)
 
             Button(action: onOK) {
                 Text("OK")

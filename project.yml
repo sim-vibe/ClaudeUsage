@@ -9,7 +9,7 @@ options:
 settings:
   base:
     MARKETING_VERSION: "1.0.0"
-    CURRENT_PROJECT_VERSION: "3"
+    CURRENT_PROJECT_VERSION: "4"
     SWIFT_VERSION: "5.9"
     DEVELOPMENT_LANGUAGE: en
 
@@ -22,8 +22,9 @@ targets:
       - path: Sources/ClaudeUsage
     settings:
       base:
-        PRODUCT_NAME: "Token Meter"
+        PRODUCT_NAME: "Token Usage"
         PRODUCT_BUNDLE_IDENTIFIER: com.simvibe.ClaudeUsage
+        DEVELOPMENT_TEAM: C2VBFJR8DH
         INFOPLIST_FILE: Info.plist
         GENERATE_INFOPLIST_FILE: NO
         CODE_SIGN_ENTITLEMENTS: ClaudeUsage.entitlements
