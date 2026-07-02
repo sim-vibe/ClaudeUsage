@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 @main
 struct ClaudeUsageApp: App {
@@ -16,5 +17,16 @@ struct ClaudeUsageApp: App {
         // so progress bars draw and text shows at full opacity instead of the
         // dimmed "disabled menu item" look.
         .menuBarExtraStyle(.window)
+        .commands {
+            // Replace SwiftUI's default "Help isn't available…" item with a
+            // Contact Support link. (macOS still adds the Help search field.)
+            CommandGroup(replacing: .help) {
+                Button("Contact Support") {
+                    if let url = URL(string: "https://keyz.dev/contact/") {
+                        NSWorkspace.shared.open(url)
+                    }
+                }
+            }
+        }
     }
 }

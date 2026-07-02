@@ -54,18 +54,17 @@ struct OnboardingView: View {
             // Path for users without Claude Code (and App Store reviewers).
             // The sandbox prevents detecting whether it's installed, so instead
             // of branching we offer a demo preview or a link to install it.
-            VStack(spacing: 6) {
+            VStack(spacing: 8) {
                 Text("Don't have Claude Code yet?")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                HStack(spacing: 12) {
-                    Button("Preview with sample data") {
-                        model.loadDemoData()
-                    }
-                    .buttonStyle(.link)
-                    Link("Install Claude Code", destination: URL(string: "https://claude.com/claude-code")!)
+                Button("Preview with sample data") {
+                    model.loadDemoData()
                 }
-                .font(.caption)
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+                Link("Install Claude Code", destination: URL(string: "https://claude.com/claude-code")!)
+                    .font(.caption)
             }
         }
         .padding(.horizontal, 22)

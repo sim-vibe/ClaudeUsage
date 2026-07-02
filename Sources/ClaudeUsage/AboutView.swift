@@ -60,6 +60,9 @@ enum AboutPanel {
     private static var window: NSWindow?
 
     static func show() {
+        // Accessory apps have no menu bar; switch to .regular so the standard
+        // App Menu (with Quit, Guideline 4) appears while About is open.
+        NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
 
         if let existing = window {
@@ -91,5 +94,7 @@ enum AboutPanel {
 
     static func close() {
         window?.close()
+        // Back to menu-bar-only: hide the Dock icon and menu bar again.
+        NSApp.setActivationPolicy(.accessory)
     }
 }
