@@ -5,17 +5,20 @@ final class BookmarkManager {
     static let shared = BookmarkManager()
     private let bookmarkKey = "claudeDirectoryBookmark"
 
-    var hasBookmark: Bool {
-        UserDefaults.standard.data(forKey: bookmarkKey) != nil
-    }
-
     var claudeDirectoryURL: URL? {
         guard let data = UserDefaults.standard.data(forKey: bookmarkKey) else { return nil }
         var isStale = false
-        return try? URL(resolvingBookmarkData: data,
-                        options: .withSecurityScope,
-                        relativeTo: nil,
-                        bookmarkDataIsStale: &isStale)
+        guard let url = try? URL(resolvingBookmarkData: data,
+                                 options: .withSecurityScope,
+                                 relativeTo: nil,
+                                 bookmarkDataIsStale: &isStale) else { return nil }
+        if isStale {
+            // Creating bookmark data requires active security-scoped access.
+            let accessed = url.startAccessingSecurityScopedResource()
+            try? saveBookmark(for: url)
+            if accessed { url.stopAccessingSecurityScopedResource() }
+        }
+        return url
     }
 
     func saveBookmark(for url: URL) throws {

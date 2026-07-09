@@ -31,9 +31,16 @@ final class RateLimitsModel: ObservableObject {
     private var ageTimer: Timer?
 
     init() {
-        isOnboarded = BookmarkManager.shared.hasBookmark
-        if isOnboarded {
+        // A bookmark that no longer resolves (e.g. after delete + reinstall, the
+        // container survives but access may not) must fall back to onboarding —
+        // re-granting folder access requires the open-panel user gesture.
+        if let claudeDir = BookmarkManager.shared.claudeDirectoryURL {
+            HookInstaller.repair(in: claudeDir)
+            isOnboarded = true
             startWatching()
+        } else {
+            BookmarkManager.shared.clearBookmark()
+            isOnboarded = false
         }
         startAnimationTimer()
         startAgeTimer()
