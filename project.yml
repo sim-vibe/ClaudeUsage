@@ -1,4 +1,4 @@
-name: ClaudeUsage
+name: TokenUsage
 options:
   bundleIdPrefix: com.simvibe
   deploymentTarget:
@@ -14,20 +14,22 @@ settings:
     DEVELOPMENT_LANGUAGE: en
 
 targets:
-  ClaudeUsage:
+  TokenUsage:
     type: application
     platform: macOS
     deploymentTarget: "13.0"
     sources:
-      - path: Sources/ClaudeUsage
+      - path: Sources/TokenUsage
     settings:
       base:
         PRODUCT_NAME: "Token Usage"
+        # App Store identity — do NOT change. Also keys the saved folder-access
+        # bookmark, so a change would lock existing users out of ~/.claude.
         PRODUCT_BUNDLE_IDENTIFIER: com.simvibe.ClaudeUsage
         DEVELOPMENT_TEAM: C2VBFJR8DH
         INFOPLIST_FILE: Info.plist
         GENERATE_INFOPLIST_FILE: NO
-        CODE_SIGN_ENTITLEMENTS: ClaudeUsage.entitlements
+        CODE_SIGN_ENTITLEMENTS: TokenUsage.entitlements
         # App Store distribution: managed signing on the Apple-account machine.
         # Local verification overrides these at the xcodebuild CLI
         # (CODE_SIGN_IDENTITY="-", CODE_SIGN_STYLE=Manual, ENABLE_HARDENED_RUNTIME=NO).

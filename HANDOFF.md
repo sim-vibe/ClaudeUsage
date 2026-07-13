@@ -8,13 +8,13 @@ a native SwiftUI rewrite of an earlier SwiftBar + Python widget. **Target: Mac A
 
 | | |
 |---|---|
-| Repo | `github.com/sim-vibe/ClaudeUsage` (origin/main) |
-| Local path | `~/Developer/ClaudeUsage` |
+| Repo | `github.com/sim-vibe/ClaudeUsage` (origin/main) — repo name still says ClaudeUsage |
+| Local path | `~/Developer/TokenUsage` |
 | App Store Connect | Apple app ID **`6773230249`** · Team **Gwangseop Shim** (personal account) |
 | Bundle ID | `com.simvibe.ClaudeUsage` — **App Store identity, do NOT change** (also keyed to the saved folder-access bookmark) |
 | User-facing name | "Token Usage for Claude" (`CFBundleDisplayName` + App Store listing name) |
-| Bundle / executable / `PRODUCT_NAME` | **`Token Usage`** → bundle is `Token Usage.app`. No "ClaudeUsage" string is user-visible. |
-| Internal Xcode target / scheme | `ClaudeUsage` (dev-only, not in the bundle, not user-visible) |
+| Bundle / executable / `PRODUCT_NAME` | **`Token Usage`** → bundle is `Token Usage.app` |
+| Xcode project / target / scheme | `TokenUsage` |
 | Copyright | `Copyright © 2026 Keyz. All rights reserved.` |
 | Support email | `support@keyz.dev` (Contact Us → mailto) |
 
@@ -45,9 +45,9 @@ with no Apple account must override those at the CLI:
 
 ```bash
 brew install xcodegen
-cd ~/Developer/ClaudeUsage
+cd ~/Developer/TokenUsage
 xcodegen generate
-xcodebuild -project ClaudeUsage.xcodeproj -scheme ClaudeUsage -configuration Debug \
+xcodebuild -project TokenUsage.xcodeproj -scheme TokenUsage -configuration Debug \
   -derivedDataPath build \
   CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="-" \
   CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=YES \
@@ -75,11 +75,12 @@ killall cfprefsd
   Automatic signing, hardened runtime), and *(b)* the native UI / plutil / demo
   rewrite. Merged taking the better side per concern; `.xcodeproj` is now
   gitignored (xcodegen is the single source of truth).
-- **App icon** — full 1024px icon set is committed under
-  `Sources/ClaudeUsage/Assets.xcassets/AppIcon.appiconset` and bundled
-  (`AppIcon.icns` + `Assets.car`). *(Was the #1 remaining item — now done.)*
-- **Name unified** — `PRODUCT_NAME = "Token Usage"`; no "ClaudeUsage" string is
-  user-visible. Display/App Store name is "Token Usage for Claude".
+- **App icon** — Icon Composer source at `Sources/TokenUsage/AppIcon.icon`
+  (layered, Liquid Glass on macOS 26). Xcode compiles it into `Assets.car` and
+  generates the legacy `AppIcon.icns` fallback for macOS 13-25.
+- **Name unified** — project, target and scheme are all `TokenUsage`;
+  `PRODUCT_NAME = "Token Usage"`. Display/App Store name is "Token Usage for
+  Claude". Only the bundle ID and the GitHub repo still read `ClaudeUsage`.
 - `plutil` hook (python3 dependency removed).
 - `used_percentage` decoded as **Double** — Claude Code sends fractional values;
   Int decoding silently dropped the whole payload.
@@ -142,14 +143,15 @@ Developer Tools. So only the build upload remains:
 
 | File | Role |
 |---|---|
-| `Sources/ClaudeUsage/ClaudeUsageApp.swift` | App entry; `.menuBarExtraStyle(.window)` |
-| `Sources/ClaudeUsage/MenuBarLabel.swift` | Menu bar icon (`RobotIcon`, base64 frames) + "Start"/percent label |
-| `Sources/ClaudeUsage/MenuContentView.swift` | Dropdown: sections, progress bars, footer, `MenuRowButtonStyle` |
-| `Sources/ClaudeUsage/OnboardingView.swift` | Onboarding + `NSOpenPanel` grant |
-| `Sources/ClaudeUsage/AboutView.swift` | About popup + its window (`AboutPanel`) |
-| `Sources/ClaudeUsage/HookInstaller.swift` | Installs `plutil` hook + patches `settings.json` |
-| `Sources/ClaudeUsage/BookmarkManager.swift` | Security-scoped bookmark for `~/.claude` (`withAccess` for reads; `beginAccess`/`endAccess` for the long-lived watcher) |
-| `Sources/ClaudeUsage/FileWatcher.swift` | Watches the `widgets/` dir (holds access) → live updates |
-| `Sources/ClaudeUsage/RateLimitsModel.swift` | State + load/refresh/demo |
-| `Sources/ClaudeUsage/Assets.xcassets/AppIcon.appiconset` | App icon (1024px set; `AppIcon`) |
+| `Sources/TokenUsage/TokenUsageApp.swift` | App entry; `.menuBarExtraStyle(.window)` |
+| `Sources/TokenUsage/MenuBarLabel.swift` | Menu bar icon (`RobotIcon`, base64 frames) + "Start"/percent label |
+| `Sources/TokenUsage/MenuContentView.swift` | Dropdown: sections, progress bars, footer, `MenuRowButtonStyle` |
+| `Sources/TokenUsage/OnboardingView.swift` | Onboarding + `NSOpenPanel` grant |
+| `Sources/TokenUsage/AboutView.swift` | About popup + its window (`AboutPanel`) |
+| `Sources/TokenUsage/HookInstaller.swift` | Installs `plutil` hook + patches `settings.json` |
+| `Sources/TokenUsage/BookmarkManager.swift` | Security-scoped bookmark for `~/.claude` (`withAccess` for reads; `beginAccess`/`endAccess` for the long-lived watcher) |
+| `Sources/TokenUsage/FileWatcher.swift` | Watches the `widgets/` dir (holds access) → live updates |
+| `Sources/TokenUsage/RateLimitsModel.swift` | State + load/refresh/demo |
+| `Sources/TokenUsage/AppIcon.icon` | App icon, Icon Composer source (`AppIcon`) |
+| `Art/` | Source art that is *not* a build input (menu bar robot frames) |
 | `Info.plist` / `project.yml` | Bundle config / xcodegen spec (`.xcodeproj` is generated, gitignored) |

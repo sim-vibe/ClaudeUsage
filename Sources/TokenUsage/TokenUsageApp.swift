@@ -2,7 +2,7 @@ import SwiftUI
 import AppKit
 
 @main
-struct ClaudeUsageApp: App {
+struct TokenUsageApp: App {
     @StateObject private var model = RateLimitsModel()
 
     var body: some Scene {
