@@ -140,6 +140,11 @@ For the **1.0** initial release:
 Initial release. Token Usage for Claude shows your Claude Code session and weekly token usage right in the menu bar.
 ```
 
+For **1.0.2** (build 7):
+```
+The app icon now adopts the new macOS icon appearance, with light, dark, and tinted variants.
+```
+
 ---
 
 ## Other ASC fields — verify, don't optimize
