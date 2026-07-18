@@ -5,6 +5,8 @@ struct MenuContentView: View {
     @EnvironmentObject var model: RateLimitsModel
     @State private var isRefreshing = false
 
+    private let reconnectTitle = "Reconnect ~/.claude"
+
     var body: some View {
         if !model.isOnboarded && !model.isDemo {
             OnboardingView()
@@ -42,6 +44,13 @@ struct MenuContentView: View {
                 model.refresh()
             }
             .keyboardShortcut("r")
+
+            // Recovery when access is broken: return to onboarding to re-grant.
+            Button(reconnectTitle) {
+                model.resetToOnboarding()
+            }
+            .buttonStyle(.link)
+            .font(.caption)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
@@ -126,6 +135,20 @@ struct MenuContentView: View {
                 }
                 .buttonStyle(MenuRowButtonStyle())
                 .keyboardShortcut("r")
+
+                // Surfaced only when data has gone stale — the state where a
+                // silently-broken grant shows up — so a healthy setup can't
+                // clear its working bookmark by an accidental click.
+                if model.fileAge > 60 {
+                    Divider()
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 3)
+
+                    Button { model.resetToOnboarding() } label: {
+                        HStack { Text(reconnectTitle); Spacer() }
+                    }
+                    .buttonStyle(MenuRowButtonStyle())
+                }
 
                 Divider()
                     .padding(.horizontal, 5)

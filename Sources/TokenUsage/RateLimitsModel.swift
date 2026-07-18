@@ -31,10 +31,11 @@ final class RateLimitsModel: ObservableObject {
     private var ageTimer: Timer?
 
     init() {
-        // A bookmark that no longer resolves (e.g. after delete + reinstall, the
-        // container survives but access may not) must fall back to onboarding —
-        // re-granting folder access requires the open-panel user gesture.
-        if let claudeDir = BookmarkManager.shared.claudeDirectoryURL {
+        // A security-scoped bookmark can resolve yet grant no working access, so
+        // onboarding is gated on the folder being readable, not merely resolving.
+        // Re-granting needs the open-panel gesture, so a broken grant falls back
+        // to onboarding.
+        if let claudeDir = BookmarkManager.shared.accessibleClaudeDirectoryURL() {
             HookInstaller.repair(in: claudeDir)
             isOnboarded = true
             startWatching()
@@ -50,6 +51,19 @@ final class RateLimitsModel: ObservableObject {
         isDemo = false
         isOnboarded = true
         startWatching()
+    }
+
+    /// Return to onboarding so the user can re-grant folder access. Recovers the
+    /// case where access breaks after launch (Refresh silently stops working)
+    /// and backs up the launch-time access check. Setting `fileWatcher` to nil
+    /// runs its deinit, which cancels the source and releases scoped access.
+    func resetToOnboarding() {
+        fileWatcher = nil
+        BookmarkManager.shared.clearBookmark()
+        rateLimits = nil
+        lastLoaded = nil
+        isDemo = false
+        isOnboarded = false
     }
 
     /// Re-read the rate limits file on demand (Refresh button).

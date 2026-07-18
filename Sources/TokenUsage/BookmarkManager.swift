@@ -21,6 +21,18 @@ final class BookmarkManager {
         return url
     }
 
+    /// The granted directory, but only if it is actually reachable right now.
+    /// A security-scoped bookmark can resolve to a URL while granting no working
+    /// access (the container outlives a delete + reinstall, or the scope is
+    /// revoked), so a successful read — not resolution — is the test of access.
+    /// An empty-but-readable folder still qualifies.
+    func accessibleClaudeDirectoryURL() -> URL? {
+        guard let url = claudeDirectoryURL else { return nil }
+        let accessed = url.startAccessingSecurityScopedResource()
+        defer { if accessed { url.stopAccessingSecurityScopedResource() } }
+        return (try? FileManager.default.contentsOfDirectory(atPath: url.path)) != nil ? url : nil
+    }
+
     func saveBookmark(for url: URL) throws {
         let data = try url.bookmarkData(options: .withSecurityScope,
                                         includingResourceValuesForKeys: nil,
